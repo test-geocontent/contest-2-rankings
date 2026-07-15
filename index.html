@@ -1199,40 +1199,13 @@ function updateRowCount(count) {
 
   if (!rowCount) return;
 
-  rowCount.textContent = count === 1
-    ? "1 company loaded"
-    : `${count} participants`;
-}
+  const shown =
+    rowsPerPage === "all"
+        ? count
+        : Math.min(count, rowsPerPage);
 
-  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-
-  if (totalPages <= 1) {
-    pagination.innerHTML = "";
-    return;
-  }
-
-  pagination.innerHTML = `
-    <button class="analysis-page-btn" ${currentPage === 1 ? "disabled" : ""} onclick="goToPage(${currentPage - 1})">
-      Previous
-    </button>
-
-    <span class="analysis-page-info">
-      Page ${currentPage} of ${totalPages}
-    </span>
-
-    <button class="analysis-page-btn" ${currentPage === totalPages ? "disabled" : ""} onclick="goToPage(${currentPage + 1})">
-      Next
-    </button>
-  `;
-}
-
-function goToPage(page) {
-  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-
-  if (page < 1 || page > totalPages) return;
-
-  currentPage = page;
-  renderTable();
+rowCount.textContent =
+    `Showing ${shown} of ${count} participants`;
 }
 
 function escapeHtml(value) {
