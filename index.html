@@ -621,6 +621,12 @@ z-index: 2;
   padding: 0 .35rem;
 }
 
+.analysis-page-btn.active-filter {
+  background: rgba(201,168,76,.18);
+  color: var(--gold2);
+  border-color: rgba(201,168,76,.8);
+}
+
     /* Section labels */
     .section-label {
       font-size: .72rem;
@@ -772,14 +778,15 @@ z-index: 2;
         RANKING TYPE
       </div>
 
-      <select
-        id="rankingType"
-        class="analysis-search"
-        style="width:220px;min-width:220px;max-width:220px"
-      >
-        <option value="Peak Return" selected>Peak Return</option>
-        <option value="Current Return">Current Return</option>
-      </select>
+      <div class="flex gap-2">
+  <button class="analysis-page-btn active-filter" data-ranking="Peak Return">
+    Peak Return
+  </button>
+
+  <button class="analysis-page-btn" data-ranking="Current Return">
+    Current Return
+  </button>
+</div>
     </div>
 
     <div>
@@ -787,21 +794,20 @@ z-index: 2;
         DISPLAY
       </div>
 
-      <select
-        id="displayRows"
-        class="analysis-search"
-        style="width:140px;min-width:140px;max-width:140px"
-      >
-        <option value="10" selected>Top 10</option>
-        <option value="all">Show All</option>
-      </select>
+     <div class="flex gap-2">
+  <button class="analysis-page-btn active-filter" data-display="10">
+    Top 10
+  </button>
+
+  <button class="analysis-page-btn" data-display="all">
+    Show All
+  </button>
+</div>
     </div>
 
   </div>
 
-  <div class="analysis-count mono" id="rowCount">
-    Loading leaderboard...
-  </div>
+<div class="analysis-count mono" id="rowCount" style="display:none"></div>
 
 </div>
 
@@ -982,10 +988,8 @@ function loadLeaderboard() {
 
         rank: r.c[0]?.v || "",
         username: r.c[1]?.v || "",
-        averageReturn:
-    r.c[2]?.v !== null && r.c[2]?.v !== undefined
-        ? Number(r.c[2].v).toFixed(2) + "%"
-        : "",
+       averageReturn:
+    r.c[2]?.f || r.c[2]?.v || "",
         picks: r.c[3]?.v || ""
 
       }));
@@ -1028,8 +1032,7 @@ function renderTable() {
         </td>
       </tr>
     `;
-
-    updateRowCount(0);
+	  
     return;
   }
 
@@ -1051,21 +1054,6 @@ const pageRows =
     tbody.appendChild(tr);
   });
 
-  updateRowCount(filteredRows.length);
-}
-
-function updateRowCount(count) {
-  const rowCount = document.getElementById("rowCount");
-
-  if (!rowCount) return;
-
-  const shown =
-    rowsPerPage === "all"
-        ? count
-        : Math.min(count, rowsPerPage);
-
-rowCount.textContent =
-    `Showing ${shown} of ${count} participants`;
 }
 
 function escapeHtml(value) {
@@ -1079,44 +1067,50 @@ function escapeHtml(value) {
 
 
 
-const rankingType = document.getElementById("rankingType");
+document.querySelectorAll("[data-ranking]").forEach(btn => {
 
-if (rankingType) {
+  btn.addEventListener("click", function(){
 
-  rankingType.addEventListener("change", function () {
+    document.querySelectorAll("[data-ranking]")
+      .forEach(b => b.classList.remove("active-filter"));
 
-    SHEET_NAME = this.value;
+    this.classList.add("active-filter");
+
+    SHEET_NAME = this.dataset.ranking;
 
     const header = document.querySelector(".analysis-table th:nth-child(3)");
 
-    if (header) {
-
+    if(header){
       header.textContent =
         SHEET_NAME === "Peak Return"
-          ? "Average Peak Return"
-          : "Average Current Return";
-
+        ? "Average Peak Return"
+        : "Average Current Return";
     }
 
     loadLeaderboard();
 
   });
 
-}
+});
 
-const rowsSelect = document.getElementById("displayRows");
+document.querySelectorAll("[data-display]").forEach(btn => {
 
-if (rowsSelect) {
-  rowsSelect.addEventListener("change", function () {
+  btn.addEventListener("click", function(){
 
-    rowsPerPage = this.value === "all"
+    document.querySelectorAll("[data-display]")
+      .forEach(b => b.classList.remove("active-filter"));
+
+    this.classList.add("active-filter");
+
+    rowsPerPage = this.dataset.display === "all"
       ? "all"
-      : parseInt(this.value);
-	  
+      : parseInt(this.dataset.display);
+
     renderTable();
 
   });
-}
+
+});
 
 /* ── Scroll reveal ── */
 const observer = new IntersectionObserver(entries => {
