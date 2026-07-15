@@ -541,6 +541,22 @@ z-index: 2;
   background:rgba(15,30,56,.98);
 }
 
+.analysis-table th:nth-child(2),
+.analysis-table td:nth-child(2){
+  position:sticky;
+  left:80px;
+  z-index:3;
+  background:rgba(15,30,56,.98);
+}
+
+.analysis-table td:nth-child(2){
+  background:rgba(22,37,68,.98);
+}
+
+.analysis-table th:nth-child(2){
+  z-index:4;
+}
+
 .analysis-table td:first-child{
   background:rgba(22,37,68,.98);
 }
@@ -771,7 +787,7 @@ z-index: 2;
 
 <div class="analysis-toolbar reveal">
 
-  <div class="flex flex-col md:flex-row md:items-end gap-4">
+ <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 w-full">
 
     <div>
       <div class="mono text-xs mb-2" style="color:var(--gold);letter-spacing:.12em">
