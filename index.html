@@ -955,27 +955,6 @@ z-index: 2;
   
 </section>
 
-<!-- Analysis Modal -->
-<div class="analysis-modal" id="modal">
-  <div class="analysis-modal-content">
-    <button class="analysis-close" onclick="closeModal()" aria-label="Close modal">✕</button>
-
-    <div class="section-label mb-3">Company Analysis</div>
-
-    <h2 id="modalCompany" class="display analysis-modal-title"></h2>
-
-    <div class="analysis-modal-meta">
-      <strong>Ticker:</strong> <span id="modalTicker"></span>
-    </div>
-
-    <p id="modalDescription" class="analysis-modal-description"></p>
-
-    <hr class="rule-gold my-6">
-
-    <div id="articleText" class="analysis-article"></div>
-  </div>
-</div>
-
 <!-- ═══════════════════════════ SPONSORS ═══════════════════════════ -->
 <section class="py-20 px-6" style="background:var(--navy2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="max-w-4xl mx-auto text-center">
@@ -1105,6 +1084,11 @@ document.getElementById('hamburger').addEventListener('click', () => {
 const SHEET_ID = "1wG2NHUpwoeWJNg25cdyr3udoYLF71qBCExxr6JVeLxw";
 let SHEET_NAME = "Peak Return";
 
+	let allRows = [];
+let filteredRows = [];
+let currentPage = 1;
+let rowsPerPage = 10;
+	
 function loadLeaderboard() {
 
   const sheetUrl =
@@ -1153,19 +1137,6 @@ function loadLeaderboard() {
 
 loadLeaderboard();
 
-    if (tbody) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="analysis-loading">
-            Unable to load leaderboard. Please try again later.
-          </td>
-        </tr>
-      `;
-    }
-
-    updateRowCount(0);
-  });
-
 function renderTable() {
   const tbody = document.getElementById("tableBody");
 
@@ -1177,7 +1148,7 @@ function renderTable() {
     tbody.innerHTML = `
       <tr>
         <td colspan="4" class="analysis-loading">
-          No companies found.
+          No participants found.
         </td>
       </tr>
     `;
@@ -1214,26 +1185,6 @@ if (rowsPerPage === "all") {
   renderPagination();
 }
 
-function openArticle(id) {
-  const row = allRows.find(x => String(x.id) === String(id));
-
-  if (!row) return;
-
-  document.getElementById("modalCompany").textContent = row.company;
-  document.getElementById("modalTicker").textContent = row.ticker;
-  document.getElementById("modalDescription").textContent = row.description;
-
-  document.getElementById("articleText").innerHTML = row.article || "<p>No analysis available yet.</p>";
-
-  document.getElementById("modal").style.display = "block";
-  document.body.style.overflow = "hidden";
-}
-
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-  document.body.style.overflow = "";
-}
-
 function updateRowCount(count) {
   const rowCount = document.getElementById("rowCount");
 
@@ -1241,7 +1192,7 @@ function updateRowCount(count) {
 
   rowCount.textContent = count === 1
     ? "1 company loaded"
-    : `${count} companies loaded`;
+    : `${count} participants`;
 }
 
 function renderPagination() {
@@ -1294,21 +1245,7 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-const analysisSearch = document.getElementById("search");
 
-if (analysisSearch) {
-  analysisSearch.addEventListener("input", function () {
-    const q = this.value.toLowerCase().trim();
-
-    filteredRows = allRows.filter(row =>
-      row.company.toLowerCase().includes(q) ||
-      row.ticker.toLowerCase().includes(q)
-    );
-
-    currentPage = 1;
-    renderTable();
-  });
-}
 
 const rankingType = document.getElementById("rankingType");
 
@@ -1335,7 +1272,7 @@ if (rankingType) {
 
 }
 
-const rowsSelect = document.getElementById("rowsPerPage");
+const rowsSelect = document.getElementById("displayRows");
 
 if (rowsSelect) {
   rowsSelect.addEventListener("change", function () {
