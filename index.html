@@ -621,144 +621,6 @@ z-index: 2;
   padding: 0 .35rem;
 }
 
-/* Modal */
-.analysis-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(6,14,28,.82);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
-  padding: 1.5rem;
-}
-
-.analysis-modal-content {
-  background:
-    linear-gradient(180deg, rgba(22,37,68,.98), rgba(11,22,40,.98));
-  border: 1px solid rgba(201,168,76,.25);
-  border-radius: 6px;
-  width: 100%;
-  max-width: 920px;
-  max-height: 86vh;
-  overflow-y: auto;
-  margin: 4vh auto;
-  padding: 2rem;
-  position: relative;
-  box-shadow: 0 30px 90px rgba(0,0,0,.45);
-}
-
-.analysis-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(201,168,76,.08);
-  border: 1px solid rgba(201,168,76,.25);
-  color: var(--gold2);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 1;
-  transition: background .2s, transform .15s;
-}
-
-.analysis-close:hover {
-  background: rgba(201,168,76,.16);
-  transform: rotate(90deg);
-}
-
-.analysis-modal-title {
-  color: var(--white);
-  font-size: clamp(1.6rem,3vw,2.4rem);
-  line-height: 1.15;
-  padding-right: 2.5rem;
-  margin-bottom: .85rem;
-}
-
-.analysis-modal-meta {
-  color: var(--muted);
-  font-size: .9rem;
-  margin-bottom: 1rem;
-}
-
-.analysis-modal-meta strong {
-  color: var(--gold2);
-}
-
-.analysis-modal-description {
-  color: #C8D4E0;
-  font-size: .94rem;
-  line-height: 1.7;
-}
-
-.analysis-article {
-  color: #C8D4E0;
-  font-size: .94rem;
-  line-height: 1.75;
-}
-
-.analysis-article p {
-  margin: 0 0 1rem;
-}
-
-.analysis-article ul {
-    list-style: disc;
-    padding-left: 24px;
-}
-
-.analysis-article ol {
-    list-style: decimal;
-    padding-left: 24px;
-}
-
-.analysis-article li {
-  margin-bottom: .45rem;
-}
-
-.analysis-article strong {
-  display: block;
-  color: var(--gold2);
-  margin: 1.4rem 0 .55rem;
-  font-weight: 600;
-}
-
-.analysis-article a {
-  color: var(--gold2);
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .analysis-toolbar {
-    display: block;
-  }
-
-  .analysis-search {
-    min-width: 0;
-    max-width: none;
-  }
-
-  .analysis-count {
-    margin-top: .8rem;
-    padding-bottom: 0;
-  }
-
-  .analysis-modal-content {
-    padding: 1.4rem;
-    margin: 2vh auto;
-    max-height: 90vh;
-  }
-}
-
-    @media (max-width: 640px) {
-      .conf-grid { grid-template-columns: 1fr; }
-    }
-
-    /* Subtle glow on prize number */
-    .prize-glow {
-      filter: drop-shadow(0 0 32px rgba(201,168,76,.25));
-    }
-
     /* Section labels */
     .section-label {
       font-size: .72rem;
@@ -1099,7 +961,6 @@ let SHEET_NAME = "Peak Return";
 
 	let allRows = [];
 let filteredRows = [];
-let currentPage = 1;
 let rowsPerPage = 10;
 	
 function loadLeaderboard() {
@@ -1130,7 +991,6 @@ function loadLeaderboard() {
       }));
 
       filteredRows = allRows;
-      currentPage = 1;
 
       renderTable();
 
@@ -1252,26 +1112,11 @@ if (rowsSelect) {
     rowsPerPage = this.value === "all"
       ? "all"
       : parseInt(this.value);
-
-    currentPage = 1;
+	  
     renderTable();
 
   });
 }
-
-window.addEventListener("click", function(event) {
-  const modal = document.getElementById("modal");
-
-  if (event.target === modal) {
-    closeModal();
-  }
-});
-
-window.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
-    closeModal();
-  }
-});
 
 /* ── Scroll reveal ── */
 const observer = new IntersectionObserver(entries => {
